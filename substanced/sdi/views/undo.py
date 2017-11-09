@@ -129,6 +129,10 @@ class UndoViews(object):
             t = tz.localize(t).strftime('%Y-%m-%d %H:%M:%S %Z')
             d['time'] = t
             desc = d['description'] or b''
+            try:
+                desc = desc.encode('ascii', 'surrogateescape')
+            except: # use original desc if any trouble
+                pass
             tid = d['id']
             un = d['user_name']
             try:
@@ -137,7 +141,8 @@ class UndoViews(object):
             except: # use original username if any trouble
                 pass
             if len(desc) > 80:
-                desc = desc[:76] + b' ...'
+                try:
+                    desc = desc[:76] + b' ...'
             tid = encode64(tid) + b' ' + desc
             d['id'] = tid
 
